@@ -1,2 +1,4 @@
+import Lib
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = print (myId 5 == 5)

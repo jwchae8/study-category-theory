@@ -3,4 +3,6 @@ module Main where
 import Lib
 
 main :: IO ()
-main = someFunc
+main = do 
+    print (myId 5)
+    print (myId 10)
