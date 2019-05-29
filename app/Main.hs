@@ -13,3 +13,4 @@ main = do
     print (myId 5)
     print (myId 10)
     print (compose double addOne 4)
+    print (safe_root_reciprocal 4)
