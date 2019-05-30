@@ -44,3 +44,11 @@ main = hspec $ do
       safe_root_reciprocal 4 `shouldBe` (double2Float 0.5, True)
       safe_root_reciprocal 0 `shouldBe` (double2Float 0.0, False)
       safe_root_reciprocal (-1) `shouldBe` (double2Float 0.0, False)
+    it "Isomorphism between Either and Maybe" $ do
+      me (Just 5) `shouldBe` Right 5
+      em (Right 5) `shouldBe` Just 5
+    it "a + a = 2 * a" $ do
+      double2Add (True, 3) `shouldBe` Left 3
+      double2Add (False, 3) `shouldBe` Right 3
+      add2Double (Left 3) `shouldBe` (True, 3)
+      add2Double (Right 3) `shouldBe` (False, 3)

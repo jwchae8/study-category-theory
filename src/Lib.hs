@@ -6,7 +6,9 @@ module Lib
       boolOne, boolTwo, boolThree,
       boolFour, boolFive, boolSix,
       boolSeven, boolEight, boolNine,
-      safe_root_reciprocal
+      safe_root_reciprocal,
+      em, me,
+      add2Double, double2Add
     ) where
 
 
@@ -100,3 +102,55 @@ safe_reprocical x = if x /= 0 then safeId ( 1 / (fromIntegral x) ) else (0, Fals
 safe_root :: Float -> SafeValue Float
 safe_root x = if x >= 0 then safeId (sqrt x) else (0, False)
 safe_root_reciprocal = safeCompose safe_reprocical safe_root
+
+-- 5.1
+-- Use initial object uniqueness proof in opposite way
+
+-- 5.2
+-- c >= a && c >= b && c' >= c && c' >= a && c' >= b
+
+-- 5.3
+-- c <= a && c <= b && c' <= c && c' <= a && c' <= b
+
+-- 5.4
+-- I use Haskell so pass this problem
+
+-- 5.5
+cop :: Either Int Bool -> Int
+cop x = case x of
+  (Left v) -> v
+  (Right v) -> if v then 1 else 0
+
+-- 5.6 0 cannot decided to be Left 0 or Right False, 1 cannot decided to be Left 1 or Right True
+
+-- 5.7 ambiguousness problem solved, but Int -> Either Int Bool is limited to maxint-2 so Either is still better
+
+-- 5.8 
+cop2 :: Int Bool -> (Int, Bool)
+cop2 x y = if y then (x+1, 0) else (x,0)
+
+-- 6.1
+me :: Maybe a -> Either () a
+me x = case x of 
+  (Just v) -> Right v
+  Nothing -> Left ()
+
+em :: Either () a -> Maybe a
+em x = case x of
+  (Left ()) -> Nothing
+  (Right v) -> Just v
+
+-- 6.2~6.3: pass
+
+-- 6.4: haskell - add Square on data Shape, and define circ / area for Square. C++/Java, create total new class Square
+
+-- 6.5
+add2Double :: Either a a -> (Bool, a)
+add2Double x = case x of
+  (Left v) -> (True, v)
+  (Right v) -> (False, v)
+
+double2Add :: (Bool, a) -> Either a a
+double2Add x = case x of
+  (True, v) -> Left v
+  (False, v) -> Right v
