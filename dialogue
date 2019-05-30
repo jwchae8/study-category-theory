@@ -1,0 +1,22 @@
+2019-05-30
+함수는 map이다.
+input value와 output value의 pair의 집합이다.
+그런고로 initial object를 정하려면, 함수가 유일해야 한다는 조건을 충족시키기 위해 map의 크기를 공집합 하나로 만들기 위해 input을 void로 두고
+terminal object를 정하려면, output value가 유일한 () type을 써야한다.
+그래서 집합에서 쓰는 공집합(최소값) 그리고 전체집합(최대값)이랑 달라진다.
+
+duality는 opposite morphism이 있을 때 성립하는 성질을 설명한거다
+
+unique up to isomorphism: isomorphism 여러개 있을수도 있음 
+unique up to unique isomorphism: isomorphism 또한 하나만 있음
+unique는 그냥 isomorphic의 syntatic sugar
+
+product: object a, b, c가 있을 때, c -> a, c -> b가 정의된 상태에서 마찬가지로 a, b로의 projection이 있는 object들과 unique morphism이 있다
+factorzier m의 역할은, object c, c'이 있고 각각의 a,b로 가는 projection이 p, q, p', q'일때
+m compose p -> p', m compose q -> q'
+
+either vs some
+either에 들어오는 타입은 left, right로 tagging돼서 아예 새로운 type이 되므로 합집합 취급이 됨
+some은 교집합을 알아서 빼줌
+그래서 either가 left, right이 없었으면 합집합이라고 보기엔 다소 곤란
+either: Left 실제값 | Right Error object
