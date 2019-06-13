@@ -280,3 +280,51 @@ double2Add x = case x of
 --   dimap f g stdmapget = lmap f . rmap g
 --   lmap f stdmapget = \key -> stdmapget (f \key)
 --   rmap g stdmapget = \key -> fmap (g (stdmapget \key))
+
+-- 10.1
+alpha :: Maybe a -> [a]
+alpha Nothing = []
+alpha (Just v) = [v]
+-- show fmapList f . alpha = alpha . fmapMaybe f
+-- fmapList f . alpha Nothing
+-- = fmapList f []
+-- = []
+-- alpha . fmapMaybe f Nothing
+-- = alpha Nothing
+-- = []
+-- fmapList f . alpha (Just v)
+-- = fmapList f [v]
+-- = [(f v)]
+-- alpha . fmapMaybe f (Just v)
+-- = alpha (Just (f v))
+-- = [(f v)]
+
+-- 10.2 infinite series of Reader () a -> [a]: ex) f (Reader g) = [g (), g (), ..., g ()]
+
+-- 10.3 Three
+-- Reader Bool a -> Maybe a
+-- f1 (Reader g) -> Nothing
+-- f2 (Reader g) -> (Just (g True))
+-- f3 (Reader g) -> (Just (g False))
+
+-- 10.4
+-- alpha :: F a -> F' a
+-- beta :: G a -> G' a
+-- (G' . F') f . (beta . alpha)a = (beta . alpha)b . (G . F) f where f = a -> b
+-- (beta . alpha) b . (G . F) f
+-- = (betaF'b . Galphab) . G . F f
+-- = betaF'b . G . F' f alphaa (G alphab :: G(F b) -> G(F' b))
+-- = G' . F' f (beta . alpha)a (betaF'b :: G(F'b) -> G'(F'b))
+-- = (G' . F') f . (beta . alpha)a
+
+-- 10.5
+-- beta :: F -> F', alpha :: G -> G', beta' :: F' -> F'', alpha' :: G' -> G''
+-- beta' alpha' beta alpha FG -> F''G''
+-- beta' beta alpha' alpha FG -> F''G''(horizontal composition)
+
+-- 10.6
+-- op1 :: Op Bool Int
+-- op1 = Op (\x -> (x > 0))
+
+-- f1 :: Bool -> Int
+-- f1 x = if x then 1 else 0
