@@ -126,8 +126,8 @@ cop x = case x of
 -- 5.7 ambiguousness problem solved, but Int -> Either Int Bool is limited to maxint-2 so Either is still better
 
 -- 5.8 
-cop2 :: Int Bool -> (Int, Bool)
-cop2 x y = if y then (x+1, 0) else (x,0)
+cop2 :: Int -> Bool -> (Int, Bool)
+cop2 x y = if y then (x+1, False) else (x, False)
 
 -- 6.1
 me :: Maybe a -> Either () a
@@ -154,3 +154,129 @@ double2Add :: (Bool, a) -> Either a a
 double2Add x = case x of
   (True, v) -> Left v
   (False, v) -> Right v
+
+
+-- 7.1 it does not obey preservation of identity in case of Just value. So fmap _ _ = Nothing cannot be functor of Maybe
+
+-- 7.2
+-- preservation of identity
+-- fmap id g
+-- = id . g
+-- = g
+-- = id g
+-- preservation of composition
+-- fmap (g . f) h 
+-- g . f . h
+-- g . (fmap f h)
+-- fmap g (fmap f h)
+-- (fmap g . fmap f) h
+
+-- 7.3: pass
+
+-- 7.4
+-- preservation of identity
+-- fmap id Nil
+-- = Nil
+-- = id Nil
+-- fmap id (Cons x t)
+-- = Cons (id x) (fmap id t)
+-- = Cons (id x) t
+-- = Cons x t
+-- = id (Cons x t)
+-- preservation of composition
+-- fmap (g . f) Nil
+-- = Nil
+-- = fmap g Nil
+-- = fmap g (fmap f Nil)
+-- = (fmap g . fmap f) Nil
+-- fmap (g . f) (Cons x t)
+-- = Cons ((g . f) x)) (fmap (g . f) t)
+-- = Cons ((g . f) x)) (fmap g (fmap f t))
+-- = Cons ((g (f x)) (fmap g (fmap f t))
+-- = fmap g (Cons (f x) (fmap f t))
+-- = fmap g (fmap f (Cons x t))
+-- = (fmap g . fmap f) (Cons x t)
+
+-- 8.1 
+-- instance Functor (Pair a) where
+--   fmap f (Pair a b) = Pair a (f b)
+-- preservation of identity
+-- fmap id (Pair a b)
+-- = Pair a (id b)
+-- = Pair a b
+-- = id (Pair a b)
+-- preservation of composition
+-- fmap (g . f) (Pair a b)
+-- = Pair a ((g . f) b)
+-- = Pair a (g (f b))
+-- = fmap g (Pair a (f b))
+-- = fmap g (fmap f (Pair a b))
+-- = (fmap g . fmap f) (Pair a b)
+-- Do the same thing for (Pair b) then we can show it's bifunctor
+
+--  class Bifunctor f where
+--    bimap :: (a -> c) -> (b -> d) -> f a b -> f c d
+--    bimap g h = first g . second h
+--    first :: (a -> c) -> f a b -> f c b
+--    first g = bimap g id
+--    second :: (b -> d) -> f a b -> f a d
+--    second = bimap id
+
+-- bimap
+-- bimap f g (Pair a b)
+-- = (first f . second g) (Pair a b)
+-- = first f (second g (Pair a b))
+-- = first f (Pair a (g b))
+-- = Pair (f a) (g b)
+-- first
+-- first f (Pair a b)
+-- = (first f . second id) (Pair a b)
+-- = Pair (f a) b
+-- second f (Pair a b)
+-- = (first id . second f) (Pair a b)
+-- = Pair a (f b)
+
+-- 8.2
+-- maybeToMaybe' :: Maybe a -> Either (Const () a) (Identity a)
+-- maybeToMaybe' Nothing = Left $ Const ()
+-- maybeToMaybe' (Just v) = Right $ Identity v
+-- maybe'ToMaybe :: Either (Const () a) (Identity a)
+-- maybe'ToMaybe (Left (Const ())) = Nothing
+-- maybe'ToMaybe (Right (Identity v)) = Just v
+-- maybeToMaybe' . maybe'ToMaybe = id
+-- maybeToMaybe' . maybe'ToMaybe (Left (Const())
+-- = maybeToMaybe' Nothing
+-- = (Left (Const ())
+-- = id (Left (Const ())
+-- maybeToMaybe' . maybe'ToMaybe (Right (Identity v))
+-- = maybeToMaybe' (Just v)
+-- = (Right (Identity v))
+-- = id (Right (Identity v))
+-- maybe'ToMaybe . maybeToMaybe = id
+-- maybe'ToMaybe . maybeToMaybe' Nothing
+-- = maybe'ToMaybe (Left (Const ()))
+-- = Nothing
+-- = id Nothing
+-- maybe'ToMaybe . maybeToMaybe (Just v)
+-- = maybe'ToMaybe (Right (Identity v))
+-- = Just v
+-- = id (Just v)
+-- 8.3
+-- instance (Functor b) => Functor (PreList a) where
+--   fmap f Nil = Nil
+--   fmap f (Cons a b) = Cons a (fmap f b)
+-- show id & composition for this case, and fixing `a` case
+-- 8.4
+-- instance Bifunctor (K2 c) where
+--   bimap _ _ (K2 c) = K2 c
+-- instance Bifunctor (Fst a) where
+--   bimap f _ (Fst a) = Fst (f a)
+-- instance Bifunctor (Snd b) where
+--   bimap _ g (Snd b) = Snd (g b)
+-- 8.5 : pass
+-- 8.6 It's a profunctor
+-- stdmapget :: Key -> maybe T
+-- instance Profunctor stdmapget where
+--   dimap f g stdmapget = lmap f . rmap g
+--   lmap f stdmapget = \key -> stdmapget (f \key)
+--   rmap g stdmapget = \key -> fmap (g (stdmapget \key))
